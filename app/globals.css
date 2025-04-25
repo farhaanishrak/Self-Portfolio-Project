@@ -5,7 +5,7 @@
 :root {
   --color-accent: #ff7a00; /* Changed from #4c4cff to orange */
   --background-dark: #0a0a0a;
-  --background-darker: #050505;
+  --background-darker: #000080
   --card-dark: rgba(30, 30, 40, 0.3);
   --text-light: #e0e0e0;
   --text-muted: #a0a0a0;
@@ -45,29 +45,61 @@ body {
   transform-style: preserve-3d;
 }
 
-
-
 /* Animated gradient background with fade-in from dark */
 .gradient-animation {
-  background:
-    radial-gradient(circle at top left, rgba(255, 110, 196, 0.25), transparent 60%),
-    radial-gradient(circle at top right, rgba(120, 115, 245, 0.25), transparent 60%),
-    radial-gradient(circle at bottom left, rgba(42, 245, 152, 0.25), transparent 60%),
-    radial-gradient(circle at bottom right, rgba(255, 229, 59, 0.25), transparent 60%);
+  background: radial-gradient(circle at top left, var(--gradient-color-1, rgba(255, 110, 196, 0.25)), transparent 20%),
+    radial-gradient(circle at top right, var(--gradient-color-2, rgba(120, 115, 245, 0.25)), transparent 20%),
+    radial-gradient(circle at bottom left, var(--gradient-color-3, rgba(42, 245, 152, 0.25)), transparent 20%),
+    radial-gradient(circle at bottom right, var(--gradient-color-4, rgba(255, 229, 59, 0.25)), transparent 20%);
   background-size: 200% 200%;
-  animation:
+  animation: 
     gradientFadeIn 3s ease forwards,
-    gradientPulse 15s ease-in-out infinite;
+    gradientColorChange 30s ease-in-out infinite alternate,
+    gradientPulse 10s ease-in-out infinite;
   mix-blend-mode: screen;
   opacity: 0; /* Start hidden */
 }
 
 @keyframes gradientPulse {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 0%, 100% 0%, 0% 100%, 100% 100%;
   }
   50% {
     background-position: 50% 50%, 50% 50%, 50% 50%, 50% 50%;
+  }
+}
+
+@keyframes gradientColorChange {
+  0% {
+    --gradient-color-1: rgba(255, 110, 196, 0.25);
+    --gradient-color-2: rgba(120, 115, 245, 0.25);
+    --gradient-color-3: rgba(42, 245, 152, 0.25);
+    --gradient-color-4: rgba(255, 229, 59, 0.25);
+  }
+  25% {
+    --gradient-color-1: rgba(120, 115, 245, 0.25);
+    --gradient-color-2: rgba(42, 245, 152, 0.25);
+    --gradient-color-3: rgba(255, 229, 59, 0.25);
+    --gradient-color-4: rgba(255, 110, 196, 0.25);
+  }
+  50% {
+    --gradient-color-1: rgba(42, 245, 152, 0.25);
+    --gradient-color-2: rgba(255, 229, 59, 0.25);
+    --gradient-color-3: rgba(255, 110, 196, 0.25);
+    --gradient-color-4: rgba(120, 115, 245, 0.25);
+  }
+  75% {
+    --gradient-color-1: rgba(255, 229, 59, 0.25);
+    --gradient-color-2: rgba(255, 110, 196, 0.25);
+    --gradient-color-3: rgba(120, 115, 245, 0.25);
+    --gradient-color-4: rgba(42, 245, 152, 0.25);
+  }
+  100% {
+    --gradient-color-1: rgba(255, 110, 196, 0.25);
+    --gradient-color-2: rgba(120, 115, 245, 0.25);
+    --gradient-color-3: rgba(42, 245, 152, 0.25);
+    --gradient-color-4: rgba(255, 229, 59, 0.25);
   }
 }
 
