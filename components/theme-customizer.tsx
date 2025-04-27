@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Palette, X } from "lucide-react"
@@ -90,5 +92,41 @@ export default function ThemeCustomizer() {
         </AnimatePresence>
       </div>
     </>
+  )
+}
+
+// Update the AboutCard component to make it smaller with less padding
+function AboutCard({
+  icon,
+  title,
+  children,
+  delay = 0,
+}: {
+  icon: React.ReactNode
+  title: string
+  children: React.ReactNode
+  delay?: number
+}) {
+  return (
+    <motion.div
+      className="glass-card p-4 rounded-xl relative overflow-hidden"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay }}
+      viewport={{ once: true }}
+      whileHover={{
+        y: -5,
+        boxShadow: "0 10px 30px -10px rgba(var(--color-accent-rgb), 0.3)",
+      }}
+    >
+      <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-accent via-accent/50 to-transparent" />
+
+      <div className="flex items-center mb-2">
+        {icon}
+        <h3 className="text-xl font-semibold ml-2 text-white">{title}</h3>
+      </div>
+
+      {children}
+    </motion.div>
   )
 }

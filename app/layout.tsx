@@ -1,5 +1,6 @@
 import "./globals.css"
 import type React from "react"
+import DebugInfo from "@/components/debug-info"
 
 export default function RootLayout({
   children,
@@ -8,7 +9,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-background-dark text-text-light">{children}</body>
+      <body className="bg-background-dark text-text-light">
+        {children}
+        <DebugInfo />
+      </body>
     </html>
   )
 }

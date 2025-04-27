@@ -4,8 +4,9 @@
 
 :root {
   --color-accent: #ff7a00; /* Changed from #4c4cff to orange */
+  --color-accent-rgb: 255, 122, 0; /* RGB version for rgba usage */
   --background-dark: #0a0a0a;
-  --background-darker: #000080
+  --background-darker: #0a0a0a; /* Changed to match background-dark */
   --card-dark: rgba(30, 30, 40, 0.3);
   --text-light: #e0e0e0;
   --text-muted: #a0a0a0;
@@ -52,10 +53,8 @@ body {
     radial-gradient(circle at bottom left, var(--gradient-color-3, rgba(42, 245, 152, 0.25)), transparent 20%),
     radial-gradient(circle at bottom right, var(--gradient-color-4, rgba(255, 229, 59, 0.25)), transparent 20%);
   background-size: 200% 200%;
-  animation: 
-    gradientFadeIn 3s ease forwards,
-    gradientColorChange 30s ease-in-out infinite alternate,
-    gradientPulse 10s ease-in-out infinite;
+  animation: gradientFadeIn 3s ease forwards, gradientColorChange 30s ease-in-out infinite alternate, gradientPulse 10s
+    ease-in-out infinite;
   mix-blend-mode: screen;
   opacity: 0; /* Start hidden */
 }
