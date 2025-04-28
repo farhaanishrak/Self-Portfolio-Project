@@ -11,7 +11,7 @@ export default function ContactForm() {
   const [phone, setPhone] = useState("")
   const [message, setMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [result, setResult] = useState<{ success: boolean; message: string } | null>(null)
+  const [result, setResult] = useState<{ success: boolean; message: string; warning?: string } | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,31 +31,28 @@ export default function ContactForm() {
       })
 
       if (response.success) {
-        setResult({
+        // Create a success result, but include any warnings
+        const resultObj = {
           success: true,
-          message: "Thank you! Your information has been submitted successfully.",
-        })
+          message: response.message || "Thank you! Your information has been submitted successfully.",
+        }
+
+        // If there was an error message despite success, add it as a warning
+        if (response.error) {
+          resultObj.warning = response.error
+        }
+
+        setResult(resultObj)
+
         // Reset form
         setEmail("")
         setPhone("")
         setMessage("")
       } else {
-        // If database save failed but we have a message
-        if (response.message && response.message.includes("Email sent")) {
-          setResult({
-            success: true,
-            message: "Thank you! We received your message via email, but couldn't save to our database.",
-          })
-          // Reset form
-          setEmail("")
-          setPhone("")
-          setMessage("")
-        } else {
-          setResult({
-            success: false,
-            message: `Error: ${response.error || "Something went wrong"}`,
-          })
-        }
+        setResult({
+          success: false,
+          message: `Error: ${response.error || "Something went wrong"}`,
+        })
       }
     } catch (error) {
       setResult({
@@ -146,6 +143,14 @@ export default function ContactForm() {
             <AlertCircle size={18} className="mr-2 flex-shrink-0 mt-0.5" />
           )}
           <span>{result.message}</span>
+        </div>
+      )}
+
+      {/* Show warning if there is one */}
+      {result?.warning && (
+        <div className="mt-2 p-3 rounded-md bg-yellow-500/20 text-yellow-200 flex items-start">
+          <AlertCircle size={18} className="mr-2 flex-shrink-0 mt-0.5" />
+          <span>Note: {result.warning}</span>
         </div>
       )}
     </div>

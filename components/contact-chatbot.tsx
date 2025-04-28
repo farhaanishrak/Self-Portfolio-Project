@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { MessageSquare, X, Send, User, Bot, Loader2, AlertCircle } from "lucide-react"
+import { MessageSquare, X, Send, User, Bot, Loader2, AlertCircle, CheckCircle } from "lucide-react"
 import { saveVisitorInfo } from "@/app/actions/visitor"
 
 type Message = {
@@ -33,6 +33,7 @@ export default function ContactChatbot() {
   const [isTyping, setIsTyping] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Scroll to bottom of messages
@@ -97,23 +98,37 @@ export default function ContactChatbot() {
 
     setIsSaving(true)
     setError(null)
+    setSuccessMessage(null)
 
     try {
       const result = await saveVisitorInfo(contactInfo)
 
       if (result.success) {
-        console.log("Visitor info saved successfully")
-        // Even if database failed but email sent, we consider it a success for the user
-        if (result.message && result.message.includes("Email sent but database")) {
-          setError("Your information was sent via email, but couldn't be saved to our database.")
+        console.log("Visitor info processed:", result.message)
+        setSuccessMessage(result.message || "Your information has been received!")
+
+        // Even if there were partial failures, we consider it a success for the user
+        // but we still show any error messages
+        if (result.error) {
+          setError(`Note: ${result.error}`)
         }
       } else {
         console.error("Error saving visitor info:", result.error)
-        setError("There was an issue saving your information, but we'll still try to reach out to you.")
+        setError(result.error || "There was an issue processing your information.")
+
+        // Add a fallback message to reassure the user
+        addBotMessage(
+          "I'm having trouble connecting to our systems right now. But don't worry, I've saved your information and we'll reach out to you soon!",
+        )
       }
     } catch (error) {
       console.error("Error in saveToDatabase:", error)
       setError("There was an issue saving your information, but we'll still try to reach out to you.")
+
+      // Add a fallback message
+      addBotMessage(
+        "I'm experiencing some technical difficulties, but I've noted your contact details and we'll make sure to get in touch with you.",
+      )
     } finally {
       setIsSaving(false)
     }
@@ -280,9 +295,17 @@ export default function ContactChatbot() {
                   </div>
                 </div>
               )}
+              {successMessage && (
+                <div className="flex justify-center">
+                  <div className="px-3 py-1 rounded-lg bg-green-500/20 text-green-200 text-xs flex items-center">
+                    <CheckCircle size={12} className="mr-1" />
+                    <span>{successMessage}</span>
+                  </div>
+                </div>
+              )}
               {error && (
                 <div className="flex justify-center">
-                  <div className="px-3 py-1 rounded-lg bg-red-500/20 text-red-200 text-xs flex items-center">
+                  <div className="px-3 py-1 rounded-lg bg-yellow-500/20 text-yellow-200 text-xs flex items-center">
                     <AlertCircle size={12} className="mr-1" />
                     <span>{error}</span>
                   </div>

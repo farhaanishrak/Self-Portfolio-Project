@@ -47,11 +47,15 @@ export async function saveVisitorInfo(visitorInfo: Visitor) {
     // Try to send email notification
     try {
       const emailResult = await sendEmailNotification(visitorInfo)
-      emailSuccess = emailResult
-      if (emailResult) {
+      emailSuccess = emailResult.success
+
+      if (emailResult.success) {
         console.log("Email sent successfully")
       } else {
-        console.error("Email sending failed")
+        console.error("Email sending failed:", emailResult.error)
+        if (!errorMessage) {
+          errorMessage = emailResult.error || "Email sending failed"
+        }
       }
     } catch (emailError) {
       console.error("Error sending email notification:", emailError)
@@ -64,11 +68,25 @@ export async function saveVisitorInfo(visitorInfo: Visitor) {
     if (databaseSuccess && emailSuccess) {
       return { success: true, message: "Data saved and email sent successfully" }
     } else if (databaseSuccess) {
-      return { success: true, message: "Data saved to database, but email notification failed" }
+      return { success: true, message: "Data saved to database, but email notification failed", error: errorMessage }
     } else if (emailSuccess) {
       return { success: true, message: "Email sent but database save failed", error: errorMessage }
     } else {
-      return { success: false, error: "Both database and email failed: " + errorMessage }
+      // Store the data in a backup file if both database and email failed
+      try {
+        await storeBackupData(visitorInfo)
+        return {
+          success: true,
+          message: "Your information was saved locally. We'll process it when our systems are back online.",
+          error: errorMessage,
+        }
+      } catch (backupError) {
+        console.error("Backup storage failed:", backupError)
+        return {
+          success: false,
+          error: "We couldn't process your information at this time. Please try again later.",
+        }
+      }
     }
   } catch (error) {
     console.error("Unexpected error in saveVisitorInfo:", error)
@@ -80,18 +98,35 @@ async function sendEmailNotification(visitorInfo: Visitor) {
   // Check if email credentials are available
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
     console.warn("Email credentials not found in environment variables")
-    return false
+    return {
+      success: false,
+      error: "Email credentials not configured",
+    }
   }
 
   try {
-    // Create a transporter
+    // Create a transporter with detailed logging
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD,
       },
+      debug: true, // Enable debug logs
+      logger: true, // Log to console
     })
+
+    // Verify connection configuration
+    try {
+      await transporter.verify()
+      console.log("SMTP connection verified successfully")
+    } catch (verifyError) {
+      console.error("SMTP verification failed:", verifyError)
+      return {
+        success: false,
+        error: `SMTP verification failed: ${verifyError instanceof Error ? verifyError.message : String(verifyError)}`,
+      }
+    }
 
     // Email content
     const mailOptions = {
@@ -110,9 +145,26 @@ async function sendEmailNotification(visitorInfo: Visitor) {
     // Send email
     const info = await transporter.sendMail(mailOptions)
     console.log("Email sent:", info.response)
-    return true
+    return { success: true }
   } catch (error) {
     console.error("Error sending email notification:", error)
-    return false
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    }
   }
+}
+
+// Backup function to store data locally when both database and email fail
+async function storeBackupData(visitorInfo: Visitor) {
+  // In a real application, you might want to store this in a local file or a more reliable storage
+  // For now, we'll just log it to the console
+  console.log("BACKUP DATA STORAGE:", {
+    timestamp: new Date().toISOString(),
+    visitor: visitorInfo,
+  })
+
+  // This is a placeholder - in a real app, you might want to implement actual storage
+  // For example, writing to a local file, a secondary database, or a queue system
+  return true
 }

@@ -33,9 +33,9 @@ import {
   Lightbulb,
   Download,
   Rocket,
-  Music,
   Globe,
   Monitor,
+  Music,
 } from "lucide-react"
 import TypewriterName from "@/components/typewriter-name"
 import SkillRating from "@/components/skill-rating"
@@ -108,10 +108,7 @@ export default function Home() {
           >
             <SocialButton icon={<Folder />} href="https://www.playbook.com/s/farhaanishrak/portfolio" />
             <SocialButton icon={<Linkedin />} href="https://linkedin.com/in/farhaanishrak" />
-            <SocialButton
-              icon={<Mail />}
-              href="mailto:farhanishrak12528@gmail.com?subject=Hello%20Farhan&body=I%20wanted%20to%20get%20in%20touch%20regarding%20a%20project."
-            />
+            <SocialButton icon={<Github />} href="https://github.com/farhaanishrak" />
           </motion.div>
         </motion.div>
         <motion.div
@@ -181,9 +178,7 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-accent to-white">
-              About Me
-            </span>
+            <span className="text-white">About Me</span>
           </motion.h2>
 
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
@@ -253,7 +248,7 @@ export default function Home() {
                   <InterestBadge icon={<Monitor />} text="Technology" />
                   <InterestBadge icon={<Camera />} text="Photography" />
                   <InterestBadge icon={<Film />} text="Movies & Anime" />
-                  <InterestBadge icon={<Music />} text="Music" />
+                  <InterestBadge icon={<Music />} text="Curated Music" />
                 </div>
               </motion.div>
             </div>
@@ -292,7 +287,7 @@ export default function Home() {
         <div className="sticky top-0 z-30 pt-20 pb-6">
           <div className="absolute inset-0 bg-gradient-to-b from-background-dark via-background-dark to-transparent"></div>
           <motion.h2
-            className="text-3xl md:text-4xl font-bold text-center relative z-10 bg-clip-text text-transparent bg-gradient-to-r from-white via-accent to-white"
+            className="text-3xl md:text-4xl font-bold text-center relative z-10 text-white"
             initial={{ opacity: 0, y: 100 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -473,12 +468,13 @@ export default function Home() {
 
       <section id="experience" className="h-screen snap-start bg-background-dark relative overflow-hidden">
         {/* Fixed header with fading effect */}
-        <div className="sticky top-0 pt-20 pb-6 z-30 bg-background-dark">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-white">Work Experience</h2>
+        <div className="sticky top-0 pt-20 pb-6 z-30">
+          <div className="relative z-30">
+            <h2 className="text-3xl md:text-4xl font-bold text-center text-white">Work Experience</h2>
+          </div>
           {/* Top fade gradient */}
-          <div className="absolute left-0 right-0 bottom-0 h-16 bg-gradient-to-t from-transparent to-background-dark"></div>
+          <div className="absolute inset-0 z-20 bg-gradient-to-b from-background-dark/90 via-background-dark/70 to-transparent"></div>
         </div>
-
         {/* Bottom fade gradient */}
         <div className="absolute left-0 right-0 bottom-0 h-8 z-20 bg-gradient-to-b from-transparent to-background-dark"></div>
 
@@ -613,7 +609,7 @@ export default function Home() {
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center text-white">Get In Touch</h2>
             <div className="glass-card p-6 rounded-xl shadow-sm">
               <p className="text-lg text-gray-300 mb-6 text-center">
-                Interested in working together? Feel free to reach out through any of the platforms below.
+                I'm always open to new opportunities — feel free to reach out!
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <ContactButton
@@ -621,7 +617,7 @@ export default function Home() {
                   text="farhanishrak12528@gmail.com"
                   href="mailto:farhanishrak12528@gmail.com"
                 />
-                <ContactButton icon={<Github />} text="GitHub" href="https://github.com" />
+                <ContactButton icon={<Github />} text="GitHub" href="https://github.com/farhaanishrak" />
                 <ContactButton icon={<Linkedin />} text="LinkedIn" href="https://linkedin.com/in/farhaanishrak" />
               </div>
             </div>
@@ -637,6 +633,10 @@ function NavItem({ id, active, icon }: { id: string; active: boolean; icon: Reac
   return (
     <a
       href={`#${id}`}
+      className={`p-2 rounde  icon: React.ReactNode }) {
+  return (
+    <a
+      href={\`#${id}`}
       className={`p-2 rounded-full transition-colors ${
         active ? "bg-accent text-white" : "text-gray-400 hover:text-accent"
       }`}
