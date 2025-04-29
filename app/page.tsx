@@ -614,8 +614,7 @@ export default function Home() {
               <div className="flex flex-wrap justify-center gap-4">
                 <ContactButton
                   icon={<Mail />}
-                  text="farhanishrak12528@gmail.com"
-                />
+                  text="farhanishrak12528@gmail.com"/>
                 <ContactButton icon={<Github />} text="GitHub" href="https://github.com/farhaanishrak" />
                 <ContactButton icon={<Linkedin />} text="LinkedIn" href="https://linkedin.com/in/farhaanishrak" />
               </div>
