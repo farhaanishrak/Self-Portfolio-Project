@@ -615,7 +615,6 @@ export default function Home() {
                 <ContactButton
                   icon={<Mail />}
                   text="farhanishrak12528@gmail.com"
-                  href="mailto:farhanishrak12528@gmail.com"
                 />
                 <ContactButton icon={<Github />} text="GitHub" href="https://github.com/farhaanishrak" />
                 <ContactButton icon={<Linkedin />} text="LinkedIn" href="https://linkedin.com/in/farhaanishrak" />
