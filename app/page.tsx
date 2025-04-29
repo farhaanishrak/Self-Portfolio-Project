@@ -775,10 +775,7 @@ function ExperienceCard({
         opacity: isVisible ? 1 : 0,
         y: isVisible ? 0 : 30,
       }}
-      transition={{
-        duration: 0.5,
-        delay: Math.random() * 0.3, // Random delay for staggered effect
-      }}
+
       whileHover={{
         scale: 1.02,
         z: 10,
