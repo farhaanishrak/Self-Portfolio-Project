@@ -20,6 +20,7 @@ function isValidUrl(urlString: string | undefined | null): boolean {
   }
 }
 
+// Update the getSupabaseClient function to be more robust in server environments
 export function getSupabaseClient() {
   if (supabaseInstance) return supabaseInstance
 
@@ -27,18 +28,11 @@ export function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  // Log environment variables for debugging (only in browser)
-  if (isBrowser) {
-    console.log("NEXT_PUBLIC_SUPABASE_URL:", supabaseUrl || "Not found")
-    console.log("NEXT_PUBLIC_SUPABASE_ANON_KEY:", supabaseAnonKey ? "Found (value hidden)" : "Not found")
-  }
-
   // Validate URL before creating client
   if (!isValidUrl(supabaseUrl)) {
     console.error("Invalid Supabase URL:", supabaseUrl)
 
     if (isBrowser) {
-      // Show a more visible error in the browser console
       console.error(
         "%c Supabase Connection Error ",
         "background: #ff0000; color: white; padding: 2px 4px; border-radius: 3px;",
@@ -52,13 +46,27 @@ export function getSupabaseClient() {
 
   // If we have a valid URL and key, create the real client
   if (supabaseUrl && supabaseAnonKey) {
-    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-      },
-    })
-    return supabaseInstance
+    try {
+      supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+        },
+        // Add global error handler
+        global: {
+          fetch: (...args) => {
+            return fetch(...args).catch((err) => {
+              console.error("Supabase fetch error:", err)
+              throw err
+            })
+          },
+        },
+      })
+      return supabaseInstance
+    } catch (error) {
+      console.error("Error creating Supabase client:", error)
+      return createMockClient()
+    }
   }
 
   // If we're missing the key but have a valid URL, create a mock client
@@ -87,8 +95,10 @@ function createMockClient() {
 // Export the singleton getter
 export const supabase = getSupabaseClient()
 
+// Updated Visitor type to include full_name
 export type Visitor = {
-  id?: string
+  id?: number
+  full_name: string
   email: string
   phone: string
   message: string

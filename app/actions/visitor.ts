@@ -17,23 +17,32 @@ export async function saveVisitorInfo(visitorInfo: Visitor) {
 
       // Only attempt database save if we have a valid Supabase URL
       if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL.includes("supabase.co")) {
-        const { data, error } = await supabase
-          .from("visitors")
-          .insert([
-            {
-              email: visitorInfo.email,
-              phone: visitorInfo.phone || "",
-              message: visitorInfo.message || "",
-            },
-          ])
-          .select()
+        try {
+          const { data, error } = await supabase
+            .from("visitors")
+            .insert([
+              {
+                full_name: visitorInfo.full_name,
+                email: visitorInfo.email,
+                phone: visitorInfo.phone || "",
+                message: visitorInfo.message || "",
+              },
+            ])
+            .select()
 
-        if (error) {
-          console.error("Error saving visitor info to Supabase:", error)
-          errorMessage = error.message
-        } else {
-          databaseSuccess = true
-          console.log("Successfully saved to database")
+          if (error) {
+            console.error("Error saving visitor info to Supabase:", error)
+            errorMessage = error.message
+          } else {
+            databaseSuccess = true
+            console.log("Successfully saved to database")
+          }
+        } catch (fetchError) {
+          console.error("Fetch error when saving to Supabase:", fetchError)
+          errorMessage =
+            fetchError instanceof Error
+              ? `Database connection error: ${fetchError.message}`
+              : "Database connection failed"
         }
       } else {
         console.warn("Skipping database save - invalid Supabase URL")
@@ -66,19 +75,18 @@ export async function saveVisitorInfo(visitorInfo: Visitor) {
 
     // Return appropriate response based on what succeeded
     if (databaseSuccess && emailSuccess) {
-      return { success: true, message: "Data saved and email sent successfully" }
+      return { success: true, message: "Thank you for your message! I'll get back to you soon." }
     } else if (databaseSuccess) {
-      return { success: true, message: "Data saved to database, but email notification failed", error: errorMessage }
+      return { success: true, message: "Your message has been received. Thank you!" }
     } else if (emailSuccess) {
-      return { success: true, message: "Email sent but database save failed", error: errorMessage }
+      return { success: true, message: "Your message has been sent via email. Thank you!" }
     } else {
       // Store the data in a backup file if both database and email failed
       try {
         await storeBackupData(visitorInfo)
         return {
           success: true,
-          message: "Your information was saved locally. We'll process it when our systems are back online.",
-          error: errorMessage,
+          message: "Your message has been received. Thank you for reaching out!",
         }
       } catch (backupError) {
         console.error("Backup storage failed:", backupError)
@@ -135,6 +143,7 @@ async function sendEmailNotification(visitorInfo: Visitor) {
       subject: "New Portfolio Visitor Contact",
       html: `
         <h2>New visitor has shared their contact information</h2>
+        <p><strong>Name:</strong> ${visitorInfo.full_name}</p>
         <p><strong>Email:</strong> ${visitorInfo.email}</p>
         <p><strong>Phone:</strong> ${visitorInfo.phone || "Not provided"}</p>
         <p><strong>Message:</strong> ${visitorInfo.message || "Not provided"}</p>
@@ -165,6 +174,5 @@ async function storeBackupData(visitorInfo: Visitor) {
   })
 
   // This is a placeholder - in a real app, you might want to implement actual storage
-  // For example, writing to a local file, a secondary database, or a queue system
   return true
 }
