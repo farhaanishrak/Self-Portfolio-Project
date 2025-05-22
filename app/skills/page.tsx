@@ -295,34 +295,34 @@ function SkillBar({
 
   return (
     <motion.div
-      className="space-y-2"
+      className="flex items-center gap-4"
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex items-center gap-3">
-        {/* Icon */}
-        <div className="w-8 h-8 rounded-full bg-black/30 flex items-center justify-center flex-shrink-0">
-          {typeof icon === "string" ? (
-            <Image src={icon || "/placeholder.svg"} alt={name} width={20} height={20} />
-          ) : (
-            icon
-          )}
-        </div>
-
-        {/* Skill name */}
-        <h4 className="text-sm font-medium text-white">{name}</h4>
+      {/* Icon - Made larger */}
+      <div className="w-12 h-12 rounded-full bg-black/30 flex items-center justify-center flex-shrink-0">
+        {typeof icon === "string" ? (
+          <Image src={icon || "/placeholder.svg"} alt={name} width={28} height={28} />
+        ) : (
+          <div className="w-8 h-8">{icon}</div>
+        )}
       </div>
 
-      {/* Horizontal progress bar */}
-      <div className="h-2 bg-black/30 rounded-full overflow-hidden">
-        <motion.div
-          className="h-full rounded-full"
-          style={{ backgroundColor: color }}
-          initial={{ width: 0 }}
-          animate={{ width: `${percentage}%` }}
-          transition={{ duration: 1.5, ease: "easeInOut" }}
-        />
+      {/* Skill name and progress bar */}
+      <div className="flex-1">
+        <h4 className="text-sm font-medium text-white mb-1">{name}</h4>
+
+        {/* Thinner horizontal progress bar */}
+        <div className="h-1 bg-black/30 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full rounded-full"
+            style={{ backgroundColor: color }}
+            initial={{ width: 0 }}
+            animate={{ width: `${percentage}%` }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+          />
+        </div>
       </div>
     </motion.div>
   )
