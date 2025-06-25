@@ -43,7 +43,7 @@ export default function ExperiencePage() {
         <ExperienceCard
           title="Digital Marketing Senior Manager"
           company="IABC Brac University"
-          period="2023-Present"
+          period="2023-2025"
           logoUrl="/logos/iabc.png"
           details={[
             "Oversaw digital marketing efforts, developed scripts, arranged shoots, filmed, and edited short-form content, including promotional videos, recruitment campaigns, and event teasers.",
@@ -78,7 +78,7 @@ export default function ExperiencePage() {
         <ExperienceCard
           title="Content Organizer"
           company="Visuals and Cinematic Universe (VCU) - Cultural Classicists"
-          period="2023-Present"
+          period="2023-2025"
           logoUrl="/logos/vcu.png"
           details={[
             "Led teams in planning and executing university events, ensuring seamless coordination and effective management of team members.",
